@@ -11,6 +11,8 @@ import themes from "themes";
 
 // project imports
 import NavigationScroll from "layout/NavigationScroll";
+import 'react-notifications/lib/notifications.css';
+import NotificationContainer from "react-notifications/lib/NotificationContainer";
 
 // ==============================|| APP ||============================== //
 
@@ -30,6 +32,7 @@ const App = ({ history }) => {
             
             <Routes1 />
           </Routes> */}
+          <NotificationContainer />
           <Routes1 />
         </NavigationScroll>
       </ThemeProvider>

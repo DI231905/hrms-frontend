@@ -8,6 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+// import IconButton from '@mui/material/IconButton';
+import EditIcon from "@mui/icons-material/Edit";
 import PageHeader from "ui-component/cards/PageHeader";
 import {
   TextField,
@@ -24,9 +26,11 @@ import { useDispatch } from "react-redux";
 import Box from "@mui/material/Box";
 import { DataGridPro } from "@mui/x-data-grid-pro";
 import { useDemoData } from "@mui/x-data-grid-generator";
+import { useNavigate } from "react-router";
 
 const User = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [userList, setUserList] = useState([]);
   const [loader, setLoader] = useState(false);
   const validationSchema = Yup.object().shape({
@@ -56,78 +60,65 @@ const User = () => {
       editable: true,
     },
     {
-      field:"mobileno",
-      headerName:"Mobile Number",
-      width:180,
+      field: "mobileno",
+      headerName: "Mobile Number",
+      width: 180,
       // align: "center",
       // valueFormatter: (params) => (isNaN(params.value) ? params.value : `+${params.value}`),
     },
     {
-      field:"BirthDate",
-      headerName:"Birth Date",
-      width:150
+      field: "altMobileNo",
+      headerName: "Alt Phonee Number",
+      width: 180,
     },
-    
     {
-      field:"JoinDate",
-      headerName:"Join Date",
-      width:150
-    }
+      field: "parentMobileNo",
+      headerName: "Parent Number",
+      width: 180,
+    },
+    {
+      field: "BirthDate",
+      headerName: "Birth Date",
+      width: 150,
+    },
+
+    {
+      field: "JoinDate",
+      headerName: "Join Date",
+      width: 150,
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      disableExport: true,
+      renderCell: renderActionCell,
+      disableColumnMenu: true,
+      sortable: false,
+      headerAlign: "center",
+      filterable: false,
+      align: "center",
+      disableReorder: true,
+      resizable: false,
+    },
   ];
 
-  // Initial form values
-  const initialValues = {
-    userName: "",
-    email: "",
-    cardId: "",
-    birthDate: "",
-    joinDate: "",
-    reLievingDate: "",
-    mobileNo: "",
-    altMobileNo: "",
-    parentMobileNo: "",
-    reportingOfficer: "",
-    leaveApprovalRights: false,
-    pmsAdmin: false,
-    dontSendTimeMail: false,
-    archive: false,
-    password: "",
-    designationId: 2, // Initial value for dropdown
-    profilePicture: null,
-    role: "",
-    status: "",
-  };
-  console.log(initialValues);
-
-  // Form submission logic
-  const onSubmit = (values, { setSubmitting }) => {
-    // You can perform API call here to send form data to the server
-    console.log(values);
-    let formData = new FormData();
-    formData.append("filename", values.profilePicture); // Appen
-    formData.append("userName", values.userName);
-    formData.append("email", values.email);
-    formData.append("cardId", values.cardId);
-    formData.append("birthDate", values.birthDate);
-    formData.append("joinDate", values.joinDate);
-    formData.append("reLievingDate", values.reLievingDate);
-    formData.append("mobileNo", values.mobileNo);
-    formData.append("altMobileNo", values.altMobileNo);
-    formData.append("parentMobileNo", values.parentMobileNo);
-    formData.append("reportingOfficer", values.reportingOfficer);
-    formData.append("leaveApprovalRights", values.leaveApprovalRights);
-    formData.append("pmsAdmin", values.pmsAdmin);
-    formData.append("dontSendTimeMail", values.dontSendTimeMail);
-    formData.append("archive", values.archive);
-    formData.append("password", values.password);
-    formData.append("designationId", values.designationId);
-
-    dispatch(
-      adduser(formData, (res) => {
-        console.log(res, "res");
-      })
+  function renderActionCell(params) {
+    console.log(params, "params");
+    return (
+      <IconButton
+        color="inherit"
+        size="small"
+        aria-label="edit"
+        onClick={() => handleViewClick(params)}
+      >
+        <EditIcon size="small" />
+      </IconButton>
     );
-    setSubmitting(false);
+  }
+
+  const handleViewClick = (params) => {
+    console.log(params, "params");
+    navigate(`/admin/config/user/edit/${params.id}`);
   };
 
   useEffect(() => {
@@ -150,14 +141,15 @@ const User = () => {
               User
             </Typography>
             {/* Example of adding a button with an icon */}
-            {/* <IconButton
+            <IconButton
               size="small"
               sx={{ ml: 2 }} // Adjust margin left for spacing
               color="primary"
               aria-label="add"
+              onClick={() => navigate("/admin/config/user/create")}
             >
               <AddIcon />
-            </IconButton> */}
+            </IconButton>
           </div>
         </PageHeader>
       </Grid>
