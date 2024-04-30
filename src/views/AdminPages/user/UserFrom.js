@@ -20,7 +20,12 @@ import {
 } from "@mui/material";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { adduser, getUser, getUserById } from "services/userService";
+import {
+  adduser,
+  designationsList,
+  getUser,
+  getUserById,
+} from "services/userService";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { NotificationManager } from "react-notifications";
@@ -29,6 +34,8 @@ import { ProfileURL } from "constants/constants";
 const UserFrom = () => {
   const param = useParams();
   const navigate = useNavigate();
+  const [designationList, setDesignationList] = useState([]);
+  const [reportingOfficerList,setReportingOfficerList] = useState([])
   const dispatch = useDispatch();
   const [loader, setLoader] = useState(false);
   const { id } = param;
@@ -69,6 +76,12 @@ const UserFrom = () => {
   console.log(initialValues);
 
   useEffect(() => {
+    dispatch(
+      designationsList((res) => {
+        setDesignationList(res.designations);
+        setReportingOfficerList(res.reportingOfficers)
+      })
+    );
     setLoader(true);
     if (id) {
       dispatch(
@@ -105,7 +118,7 @@ const UserFrom = () => {
 
   // Form submission logic
   const onSubmit = (values, { setSubmitting }) => {
-    console.log(values,'values')
+    console.log(values, "values");
     // You can perform API call here to send form data to the server
     console.log(values);
     let formData = new FormData();
@@ -126,6 +139,8 @@ const UserFrom = () => {
     formData.append("archive", values.archive);
     formData.append("password", values.password);
     formData.append("designationId", values.designationId);
+    formData.append("role", values.role);
+    formData.append("status", values.status);
 
     dispatch(
       adduser(formData, (res) => {
@@ -228,7 +243,9 @@ const UserFrom = () => {
                         <img
                           src={
                             values.profile_image
-                              ? id ? `${ProfileURL}/${id}/${values.profile_image}`:URL.createObjectURL(values.profile_image)
+                              ? id
+                                ? `${ProfileURL}/${id}/${values.profile_image}`
+                                : URL.createObjectURL(values.profile_image)
                               : "default_user_icon.png" // Replace "default_user_icon.png" with your default user icon image path
                           }
                           alt="Profile"
@@ -296,7 +313,7 @@ const UserFrom = () => {
                           }}
                         />
                         {/* Reporting Officer field */}
-                        <TextField
+                        {/* <TextField
                           name="reportingOfficer"
                           label="Reporting Officer"
                           value={values.reportingOfficer}
@@ -308,7 +325,34 @@ const UserFrom = () => {
                             Boolean(errors.reportingOfficer)
                           }
                           helperText={<ErrorMessage name="reportingOfficer" />}
-                        />
+                        /> */}
+                        <FormControl
+                          variant="outlined"
+                          style={{
+                            width: "100%",
+                            marginTop: "16px",
+                            marginBottom: "16px",
+                          }}
+                        >
+                          <InputLabel htmlFor="outlined-age-native-simple">
+                          Reporting Officer
+                          </InputLabel>
+                          <Select
+                            native
+                            name="reportingOfficer"
+                            value={values.reportingOfficer}
+                            onChange={handleChange}
+                            label="Reporting Officer"
+                          >
+                            <option aria-label="None" value="" />
+                            <option aria-label="None" value="" />
+                            {reportingOfficerList && reportingOfficerList.map((option) => (
+                              <option key={option.id} value={option.id}>
+                                {option.name}
+                              </option>
+                            ))}
+                          </Select>
+                        </FormControl>
                         {/* Add more fields here */}
                       </Grid>
                       {/* Right part of the form */}
@@ -384,9 +428,12 @@ const UserFrom = () => {
                             label="Designation"
                           >
                             <option aria-label="None" value="" />
-                            <option value={1}>Software Enigneer</option>
-                            <option value={2}>Senior Software Enigneer</option>
-                            <option value={3}>Project Manager</option>
+                            <option aria-label="None" value="" />
+                            {designationList && designationList.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
                           </Select>
                         </FormControl>
                         <FormControl

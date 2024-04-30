@@ -29,7 +29,7 @@ export const getUser = (cb) => {
     axiosApi.defaults.headers.common['token'] = `${localStorage.getItem('token')}`;
     return (dispatch) => {
         dispatch({ type: FETCH_START });
-        axiosApi.get('user/show').then((res) => {
+        axiosApi.get('/user/show').then((res) => {
             console.log(res,'res')
             if (res.status == 200) {
                 if (cb) cb(res.data.user)
@@ -51,6 +51,26 @@ export const getUserById = (id,cb)=>{
             console.log(res,'res')
             if (res.status == 200) {
                 if (cb) cb(res.data.user)
+
+            } else {
+                dispatch({ type: FETCH_ERROR, payload: res.data.message });
+            }
+        }).catch((error) => {
+            errorHandler(error, dispatch)
+        })
+    }
+}
+
+
+export const designationsList = (cb) =>{
+    axiosApi.defaults.headers.common['token'] = `${localStorage.getItem('token')}`;
+    return (dispatch) => {
+        dispatch({ type: FETCH_START });
+        axiosApi.get(`/user/designation`).then((res) => {
+            console.log(res,'res')
+            if (res.status == 200) {
+                console.log(res,'res')
+                if (cb) cb(res.data.response)
 
             } else {
                 dispatch({ type: FETCH_ERROR, payload: res.data.message });
